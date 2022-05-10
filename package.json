@@ -34,6 +34,9 @@
   "dependencies": {
     "@ant-design/colors": "^6.0.0",
     "@ant-design/icons-vue": "^6.1.0",
+    "@fast-crud/fast-crud": "^1.1.2",
+    "@fast-crud/fast-extends": "^1.1.2",
+    "@fast-crud/ui-antdv": "^1.1.2",
     "@iconify/iconify": "^2.2.1",
     "@logicflow/core": "^1.1.13",
     "@logicflow/extension": "^1.1.13",
@@ -96,6 +99,7 @@
     "@vue/compiler-sfc": "^3.2.33",
     "@vue/test-utils": "^2.0.0-rc.21",
     "autoprefixer": "^10.4.4",
+    "axios-mock-adapter": "^1.20.0",
     "commitizen": "^4.2.4",
     "conventional-changelog-cli": "^2.2.2",
     "cross-env": "^7.0.3",
