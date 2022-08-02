@@ -1,11 +1,11 @@
-import type { AxiosRequestConfig, AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import type { AxiosRequestConfig, AxiosInstance, AxiosResponse } from 'axios';
 import type { RequestOptions, Result, UploadFileParams } from '/#/axios';
 import type { CreateAxiosOptions } from './axiosTransform';
 import axios from 'axios';
 import qs from 'qs';
 import { AxiosCanceler } from './axiosCancel';
 import { isFunction } from '/@/utils/is';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, omit } from 'lodash-es';
 import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { RequestEnum } from '/@/enums/httpEnum';
 
@@ -122,17 +122,11 @@ export class VAxios {
    */
   uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams) {
     const formData = new window.FormData();
-    const customFilename = params.name || 'file';
-
-    if (params.filename) {
-      formData.append(customFilename, params.file, params.filename);
-    } else {
-      formData.append(customFilename, params.file);
-    }
 
     if (params.data) {
       Object.keys(params.data).forEach((key) => {
-        const value = params.data![key];
+        if (!params.data) return;
+        const value = params.data[key];
         if (Array.isArray(value)) {
           value.forEach((item) => {
             formData.append(`${key}[]`, item);
@@ -140,9 +134,15 @@ export class VAxios {
           return;
         }
 
-        formData.append(key, params.data![key]);
+        formData.append(key, params.data[key]);
       });
     }
+    formData.append(params.name || 'file', params.file, params.filename);
+    const customParams = omit(params, 'file', 'filename', 'file');
+
+    Object.keys(customParams).forEach((key) => {
+      formData.append(key, customParams[key]);
+    });
 
     return this.axiosInstance.request<T>({
       ...config,
@@ -150,7 +150,6 @@ export class VAxios {
       data: formData,
       headers: {
         'Content-type': ContentTypeEnum.FORM_DATA,
-        // @ts-ignore
         ignoreCancelToken: true,
       },
     });
@@ -222,13 +221,10 @@ export class VAxios {
           }
           resolve(res as unknown as Promise<T>);
         })
-        .catch((e: Error | AxiosError) => {
+        .catch((e: Error) => {
           if (requestCatchHook && isFunction(requestCatchHook)) {
             reject(requestCatchHook(e, opt));
             return;
-          }
-          if (axios.isAxiosError(e)) {
-            // rewrite error message from axios in here
           }
           reject(e);
         });

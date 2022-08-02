@@ -97,3 +97,9 @@ export function isUrl(path: string): boolean {
     /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
   return reg.test(path);
 }
+
+export function last(data: any) {
+  if (isArray(data) || isString(data)) {
+    return data[data.length - 1];
+  }
+}

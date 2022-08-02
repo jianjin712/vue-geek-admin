@@ -1,4 +1,4 @@
-export type ErrorMessageMode = 'none' | 'modal' | 'message' | undefined;
+export type ErrorMessageMode = 'notice' | 'none' | 'modal' | 'message' | undefined;
 
 export interface RequestOptions {
   // Splicing request parameters to url
@@ -14,8 +14,6 @@ export interface RequestOptions {
   joinPrefix?: boolean;
   // Interface address, use the default apiUrl if you leave it blank
   apiUrl?: string;
-  // 请求拼接路径
-  urlPrefix?: string;
   // Error message prompt type
   errorMessageMode?: ErrorMessageMode;
   // Whether to add a timestamp
@@ -27,16 +25,11 @@ export interface RequestOptions {
   retryRequest?: RetryRequest;
 }
 
-export interface RetryRequest {
-  isOpenRetry: boolean;
-  count: number;
-  waitTime: number;
-}
 export interface Result<T = any> {
   code: number;
   type: 'success' | 'error' | 'warning';
   message: string;
-  result: T;
+  data: T;
 }
 
 // multipart/form-data: upload file

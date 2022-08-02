@@ -2,7 +2,7 @@ import type { RouteLocationNormalized, RouteRecordNormalized } from 'vue-router'
 import type { App, Plugin } from 'vue';
 
 import { unref } from 'vue';
-import { isObject } from '/@/utils/is';
+import { isArray, isObject } from '/@/utils/is';
 
 export const noop = () => {};
 
@@ -42,7 +42,7 @@ export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
 
 export function openWindow(
   url: string,
-  opt?: { target?: TargetContext | string; noopener?: boolean; noreferrer?: boolean },
+  opt?: { target?: TargetContext | string; noopener?: boolean; noreferrer?: boolean }
 ) {
   const { target = '__blank', noopener = true, noreferrer = true } = opt || {};
   const feature: string[] = [];
@@ -89,3 +89,63 @@ export const withInstall = <T>(component: T, alias?: string) => {
   };
   return component as T & Plugin;
 };
+
+export function orderBy(list: Array<any>, key: any) {
+  return list.sort((a, b) => a[key] - b[key]);
+}
+
+export function deepTree(list: Array<any>) {
+  const newList: Array<any> = [];
+  const map: any = {};
+
+  list.forEach((e) => (map[e.id] = e));
+
+  list.forEach((e) => {
+    const parent = map[e.parentId];
+
+    if (parent) {
+      (parent.children || (parent.children = [])).push(e);
+    } else {
+      newList.push(e);
+    }
+  });
+
+  const fn = (list: Array<any>) => {
+    list.map((e) => {
+      if (e.children instanceof Array) {
+        e.children = orderBy(e.children, 'orderNum');
+
+        fn(e.children);
+      }
+    });
+  };
+
+  fn(newList);
+
+  return orderBy(newList, 'orderNum');
+}
+
+export function revDeepTree(list: Array<any> = []) {
+  const d: Array<any> = [];
+  let id = 0;
+
+  const deep = (list: Array<any>, parentId: any) => {
+    list.forEach((e) => {
+      if (!e.id) {
+        e.id = id++;
+      }
+
+      e.parentId = parentId;
+
+      d.push(e);
+
+      if (e.children && isArray(e.children)) {
+        deep(e.children, e.id);
+      }
+    });
+  };
+
+  deep(list || [], null);
+
+  return d;
+}

@@ -89,6 +89,8 @@
         };
         opt.title = undefined;
         const { isDetail, width, wrapClassName, getContainer } = opt;
+        // 适配antd 3.x
+        if (opt?.wrapClassName) delete opt.wrapClassName;
         if (isDetail) {
           if (!width) {
             opt.width = '100%';

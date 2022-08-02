@@ -2,7 +2,7 @@ import type { AppRouteModule, AppRouteRecordRaw } from '/@/router/types';
 import type { Router, RouteRecordNormalized } from 'vue-router';
 
 import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT } from '/@/router/constant';
-import { cloneDeep, omit } from 'lodash-es';
+import { cloneDeep, omit, has } from 'lodash-es';
 import { warn } from '/@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
 
@@ -15,6 +15,70 @@ LayoutMap.set('LAYOUT', LAYOUT);
 LayoutMap.set('IFRAME', IFRAME);
 
 let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
+
+/**
+ * 格式化 后端 结构信息并递归生成层级路由表
+ * @param routerMap
+ * @param parent
+ * @returns {*}
+ */
+export const routerGenerator = (routerMap, parent?): any[] => {
+  return routerMap.map((item: any) => {
+    const { title, hideInMenu, hideChildInMenu, hiddenHeaderContent, target, icon } =
+      item.meta || {};
+    const currentRouter: any = {
+      ...item,
+      // 路由地址 动态拼接生成如 /dashboard/workplace
+      //path: `${(parent && parent.path) || ''}/${item.path}`,
+      //path: `${item.path}`,
+      // 路由名称，建议唯一
+      name: item.name || '',
+      // 该路由对应页面的 组件
+      //component: () => import(`@${item.component}.vue` /*@Vite-Ignore*/),
+      //component: item.component,
+      // meta: 页面标题, 菜单图标, 页面权限(供指令权限用，可去掉)
+      meta: {
+        ...item.meta,
+        label: item.meta.title,
+        icon: item.meta.icon || 'AntDesignOutlined',
+        permissions: item.meta.permissions || null,
+      },
+    };
+    // 是否设置了隐藏菜单
+    if (hideInMenu === false) {
+      currentRouter.hideInMenu = true;
+    }
+    // 是否设置了隐藏子菜单
+    if (hideChildInMenu) {
+      currentRouter.hideChildInMenu = true;
+    }
+    // 为了防止出现后端返回结果不规范，处理有可能出现拼接出两个 反斜杠
+    if (!currentRouter.path.startsWith('http')) {
+      currentRouter.path = currentRouter.path.replace('//', '/');
+    }
+    // 重定向
+    // item.redirect && (currentRouter.redirect = item.redirect);
+    if (has(item, 'redirect')) {
+      currentRouter.redirect = item.redirect;
+    }
+    // 是否有子菜单，并递归处理
+    if (has(item, 'children') && item.children.length > 0) {
+      //如果未定义 redirect 默认第一个子路由为 redirect
+      /*!item.redirect && (currentRouter.redirect = `${item.path}/${item.children[0].path}`);*/
+      if (!has(item, 'redirect')) {
+        currentRouter.redirect = `${item.path}${item?.children[0]?.path}`;
+        //const _path = has(item, 'children.[0].children') ? item.children[0].children[0].path : null;
+        // console.log([item?.name, item?.path, item?.children[0]?.path, _path]);
+        //const parentPath = item.path.includes('/', 0) ? item.path.replace('/', '') : item.path;
+        //currentRouter.redirect = _path;
+        //['', parentPath, item.children[0].path.replace('/', '')].join('/');
+      }
+      // Recursion
+      currentRouter.children = routerGenerator(item.children, currentRouter);
+    }
+    return currentRouter;
+  });
+};
 
 // Dynamic introduction
 function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
@@ -42,7 +106,7 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
 
 function dynamicImport(
   dynamicViewsModules: Record<string, () => Promise<Recordable>>,
-  component: string,
+  component: string
 ) {
   const keys = Object.keys(dynamicViewsModules);
   const matchKeys = keys.filter((key) => {
@@ -58,7 +122,7 @@ function dynamicImport(
     return dynamicViewsModules[matchKey];
   } else if (matchKeys?.length > 1) {
     warn(
-      'Please do not create `.vue` and `.TSX` files with the same file name in the same hierarchical directory under the views folder. This will cause dynamic introduction failure',
+      'Please do not create `.vue` and `.TSX` files with the same file name in the same hierarchical directory under the views folder. This will cause dynamic introduction failure'
     );
     return;
   } else {
@@ -77,7 +141,7 @@ export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModul
       } else {
         route.children = [cloneDeep(route)];
         route.component = LAYOUT;
-        route.name = `${route.name}Parent`;
+        route.name = `${route.name}`;
         route.path = '';
         const meta = route.meta || {};
         meta.single = true;
@@ -126,7 +190,7 @@ function promoteRouteLevel(routeModule: AppRouteModule) {
 function addToChildren(
   routes: RouteRecordNormalized[],
   children: AppRouteRecordRaw[],
-  routeModule: AppRouteModule,
+  routeModule: AppRouteModule
 ) {
   for (let index = 0; index < children.length; index++) {
     const child = children[index];

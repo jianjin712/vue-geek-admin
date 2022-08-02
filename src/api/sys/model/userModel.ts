@@ -11,6 +11,11 @@ export interface RoleInfo {
   value: string;
 }
 
+export interface OrgInfo {
+  orgName: string;
+  value: string;
+}
+
 /**
  * @description: Login interface return value
  */
@@ -29,10 +34,14 @@ export interface GetUserInfoModel {
   userId: string | number;
   // 用户名
   username: string;
-  // 真实名字
-  realName: string;
+  // 昵称
+  nickName: string;
   // 头像
   avatar: string;
   // 介绍
-  desc?: string;
+  description?: string;
+  // 组织id
+  orgIds?: OrgInfo[];
+  // tenantId
+  tenantId?: string | number;
 }

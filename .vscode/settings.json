@@ -59,6 +59,8 @@
   "path-intellisense.mappings": {
     "/@/": "${workspaceRoot}/src"
   },
+  "prettier.requireConfig": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
   "[javascriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

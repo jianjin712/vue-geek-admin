@@ -22,7 +22,7 @@ async function bootstrap() {
   setupStore(app);
 
   // Initialize internal system configuration
-  initAppConfigStore();
+  initAppConfigStore(app);
 
   // Register global components
   registerGlobComp(app);

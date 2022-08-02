@@ -29,6 +29,44 @@ export function listToTree<T = any>(list: any[], config: Partial<TreeHelperConfi
   return result;
 }
 
+export function setMenuMeta(menus: any) {
+  if (menus) {
+    menus.forEach((item: any) => {
+      if (!item?.meta) {
+        item.meta = {
+          hideMenu: item?.display ? false : true,
+          icon: item?.icon || 'ant-design:ant-design-outlined',
+          title: item?.label || '未命名',
+        };
+      }
+    });
+  }
+  function listToTree(list: any[]) {
+    const idMap = {};
+    const tree = [];
+    for (const item of list) {
+      item.name = item?.label || item?.title;
+      idMap[item.id] = item;
+      if (item.parentId == null || item.parentId <= 0) {
+        tree.push(item);
+      }
+    }
+    for (const item of list) {
+      if (item.parentId > 0) {
+        const parent = idMap[item.parentId];
+        if (parent) {
+          if (parent.children == null) {
+            parent.children = [];
+          }
+          parent.children.push(item);
+        }
+      }
+    }
+    return tree;
+  }
+  return listToTree(menus);
+}
+
 export function treeToList<T = any>(tree: any, config: Partial<TreeHelperConfig> = {}): T {
   config = getConfig(config);
   const { children } = config;
@@ -43,7 +81,7 @@ export function treeToList<T = any>(tree: any, config: Partial<TreeHelperConfig>
 export function findNode<T = any>(
   tree: any,
   func: Fn,
-  config: Partial<TreeHelperConfig> = {},
+  config: Partial<TreeHelperConfig> = {}
 ): T | null {
   config = getConfig(config);
   const { children } = config;
@@ -58,7 +96,7 @@ export function findNode<T = any>(
 export function findNodeAll<T = any>(
   tree: any,
   func: Fn,
-  config: Partial<TreeHelperConfig> = {},
+  config: Partial<TreeHelperConfig> = {}
 ): T[] {
   config = getConfig(config);
   const { children } = config;
@@ -74,7 +112,7 @@ export function findNodeAll<T = any>(
 export function findPath<T = any>(
   tree: any,
   func: Fn,
-  config: Partial<TreeHelperConfig> = {},
+  config: Partial<TreeHelperConfig> = {}
 ): T | T[] | null {
   config = getConfig(config);
   const path: T[] = [];
@@ -123,7 +161,7 @@ export function findPathAll(tree: any, func: Fn, config: Partial<TreeHelperConfi
 export function filter<T = any>(
   tree: T[],
   func: (n: T) => boolean,
-  config: Partial<TreeHelperConfig> = {},
+  config: Partial<TreeHelperConfig> = {}
 ): T[] {
   config = getConfig(config);
   const children = config.children as string;
@@ -141,7 +179,7 @@ export function filter<T = any>(
 export function forEach<T = any>(
   tree: T[],
   func: (n: T) => any,
-  config: Partial<TreeHelperConfig> = {},
+  config: Partial<TreeHelperConfig> = {}
 ): void {
   config = getConfig(config);
   const list: any[] = [...tree];
@@ -167,7 +205,7 @@ export function treeMap<T = any>(treeData: T[], opt: { children?: string; conver
  */
 export function treeMapEach(
   data: any,
-  { children = 'children', conversion }: { children?: string; conversion: Fn },
+  { children = 'children', conversion }: { children?: string; conversion: Fn }
 ) {
   const haveChildren = Array.isArray(data[children]) && data[children].length > 0;
   const conversionData = conversion(data) || {};
@@ -178,7 +216,7 @@ export function treeMapEach(
         treeMapEach(i, {
           children,
           conversion,
-        }),
+        })
       ),
     };
   } else {
@@ -195,10 +233,12 @@ export function treeMapEach(
  * @param parentNode 父节点
  */
 export function eachTree(treeDatas: any[], callBack: Fn, parentNode = {}) {
-  treeDatas.forEach((element) => {
-    const newNode = callBack(element, parentNode) || element;
-    if (element.children) {
-      eachTree(element.children, callBack, newNode);
-    }
-  });
+  if (treeDatas) {
+    treeDatas.forEach((element) => {
+      const newNode = callBack(element, parentNode) || element;
+      if (element.children) {
+        eachTree(element.children, callBack, newNode);
+      }
+    });
+  }
 }

@@ -29,6 +29,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 
   const { VITE_PORT, VITE_PUBLIC_PATH, VITE_PROXY, VITE_DROP_CONSOLE } = viteEnv;
 
+  const proxy = createProxy(VITE_PROXY);
+
   const isBuild = command === 'build';
 
   return {
@@ -53,12 +55,12 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       ],
     },
     server: {
-      https: true,
+      https: false,
       // Listening on all local IPs
       host: true,
       port: VITE_PORT,
       // Load proxy configuration from .env
-      proxy: createProxy(VITE_PROXY),
+      proxy,
     },
     esbuild: {
       pure: VITE_DROP_CONSOLE ? ['console.log', 'debugger'] : [],
@@ -87,6 +89,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // Suppress warning
       __INTLIFY_PROD_DEVTOOLS__: false,
       __APP_INFO__: JSON.stringify(__APP_INFO__),
+      __PROXY_LIST__: JSON.stringify(proxy),
     },
 
     css: {
@@ -109,6 +112,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         '@iconify/iconify',
         'ant-design-vue/es/locale/zh_CN',
         'ant-design-vue/es/locale/en_US',
+        'moment/dist/locale/zh-cn',
+        'moment/dist/locale/eu',
       ],
     },
   };

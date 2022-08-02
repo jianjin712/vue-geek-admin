@@ -1,6 +1,8 @@
 /**
  * Application configuration
  */
+import type { App } from 'vue';
+
 import type { ProjectConfig } from '/#/config';
 
 import { PROJ_CFG_KEY } from '/@/enums/cacheEnum';
@@ -21,11 +23,34 @@ import { primaryColor } from '../../build/config/themeConfig';
 import { Persistent } from '/@/utils/cache/persistent';
 import { deepMerge } from '/@/utils';
 import { ThemeEnum } from '/@/enums/appEnum';
+//import storage from '/@/utils/storage';
+
+//import { service, useEps } from '/@/hooks/core/useService';
+//import { useInitialService } from '/@/hooks/core/service';
+//import { getToken } from '/@/utils/auth';
+//import { getToken } from '/@/utils/auth';
+import { useCode } from '/@/geek/index';
+//import { useModule } from '/@/geek/module';
 
 // Initial project configuration
-export function initAppConfigStore() {
+export function initAppConfigStore(app: App) {
   const localeStore = useLocaleStore();
   const appStore = useAppStore();
+  // app.config.globalProperties.service = service;
+  // app.provide('service', service);
+  // appStore.setService(service);
+  // console.group('后端服务注册');
+  // console.log(service);
+  // console.groupEnd();
+  //const eps = storage.get('eps');
+  const { service } = useCode();
+  app.config.globalProperties.service = service;
+  app.provide('service', service);
+  appStore.setService(service);
+  console.log(service);
+  //console.log(eps);
+  //console.log(module);
+
   let projCfg: ProjectConfig = Persistent.getLocal(PROJ_CFG_KEY) as ProjectConfig;
   projCfg = deepMerge(projectSetting, projCfg || {});
   const darkMode = appStore.getDarkMode;

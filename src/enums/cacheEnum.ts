@@ -1,3 +1,5 @@
+// update token key
+export const REFRESH_TOKEN = 'REFRESH_TOKEN__';
 // token key
 export const TOKEN_KEY = 'TOKEN__';
 

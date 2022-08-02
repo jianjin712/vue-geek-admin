@@ -23,7 +23,8 @@ export function usePermission() {
   const appStore = useAppStore();
   const permissionStore = usePermissionStore();
   const { closeAll } = useTabs(router);
-
+  const user: any = userStore.getUserInfo;
+  //console.log(userStore.getUserInfo);
   /**
    * Change permission mode
    */
@@ -58,6 +59,10 @@ export function usePermission() {
    */
   function hasPermission(value?: RoleEnum | RoleEnum[] | string | string[], def = true): boolean {
     // Visible by default
+    if (user.id < 2) {
+      return true;
+    }
+
     if (!value) {
       return def;
     }
@@ -88,7 +93,7 @@ export function usePermission() {
   async function changeRole(roles: RoleEnum | RoleEnum[]): Promise<void> {
     if (projectSetting.permissionMode !== PermissionModeEnum.ROUTE_MAPPING) {
       throw new Error(
-        'Please switch PermissionModeEnum to ROUTE_MAPPING mode in the configuration to operate!',
+        'Please switch PermissionModeEnum to ROUTE_MAPPING mode in the configuration to operate!'
       );
     }
 

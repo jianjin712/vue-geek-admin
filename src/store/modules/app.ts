@@ -25,6 +25,10 @@ interface AppState {
   projectConfig: ProjectConfig | null;
   // When the window shrinks, remember some states, and restore these states when the window is restored
   beforeMiniInfo: BeforeMiniState;
+  // Curd API Service
+  service: any;
+  // eps Service
+  eps: any;
 }
 let timeId: TimeoutHandle;
 export const useAppStore = defineStore({
@@ -34,8 +38,16 @@ export const useAppStore = defineStore({
     pageLoading: false,
     projectConfig: Persistent.getLocal(PROJ_CFG_KEY),
     beforeMiniInfo: {},
+    service: {},
+    eps: {},
   }),
   getters: {
+    getEps(): any {
+      return this.eps;
+    },
+    getService(): any {
+      return this.service;
+    },
     getPageLoading(): boolean {
       return this.pageLoading;
     },
@@ -65,6 +77,14 @@ export const useAppStore = defineStore({
     },
   },
   actions: {
+    setService(service: any): void {
+      this.service = service;
+    },
+
+    setEps(eps: any): void {
+      this.eps = eps;
+    },
+
     setPageLoading(loading: boolean): void {
       this.pageLoading = loading;
     },

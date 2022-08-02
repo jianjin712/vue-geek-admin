@@ -7,6 +7,7 @@ import type {
   PropType as VuePropType,
 } from 'vue';
 
+declare const __PROXY_LIST__: any[];
 declare global {
   const __APP_INFO__: {
     pkg: {

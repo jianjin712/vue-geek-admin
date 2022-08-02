@@ -20,9 +20,10 @@
   import { PageWrapper } from '/@/components/Page';
   import { Description, DescItem, useDescription } from '/@/components/Description/index';
   import { GITHUB_URL, SITE_URL, DOC_URL } from '/@/settings/siteSetting';
+  import { useCode } from '/@/geek/index';
 
+  const { service } = useCode();
   const { pkg, lastBuildTime } = __APP_INFO__;
-
   const { dependencies, devDependencies, name, version } = pkg;
 
   const schema: DescItem[] = [];
@@ -30,6 +31,10 @@
 
   const commonTagRender = (color: string) => (curVal) => h(Tag, { color }, () => curVal);
   const commonLinkRender = (text: string) => (href) => h('a', { href, target: '_blank' }, text);
+
+  service.sys.open.live().then((r) => {
+    console.log(r.data);
+  });
 
   const infoSchema: DescItem[] = [
     {
