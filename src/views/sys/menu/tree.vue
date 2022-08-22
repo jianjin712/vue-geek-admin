@@ -33,7 +33,6 @@
   import { useCode } from '/@/geek/index';
   import { useModuleForm } from './module';
   import storage from '/@/utils/storage';
-  import * as mqtt from 'mqtt/dist/mqtt.min';
 
   export default defineComponent({
     name: 'MenuTree',
@@ -53,41 +52,6 @@
         api: [],
         path: [],
       };
-
-      const options = {
-        port: 8083,
-        connectionTimeout: 4000,
-        //clientId: 'mqtt_' + Math.random().toString(16).substring(2, 8),
-      };
-      const client = mqtt.connect('ws://127.0.0.1/mqtt', options);
-      client.on('connect', (e) => {
-        console.log('连接成功', e);
-        client.subscribe('/test/heloo', { qos: 0 }, (error) => {
-          console.log(error);
-        }),
-          client.on('message', (topic, message) => {
-            //console.log('收到主题', topic, '的消息', message.toString());
-            if (message.toString() == 'hi') {
-              client.publish('/test/heloo', 'Hello MI MacOS' + Math.random(), {
-                qos: 0,
-                rein: false,
-              });
-            } else {
-              console.log('收到主题', topic, '的消息', message.toString());
-            }
-          }),
-          client.on('reconnect', (error) => {
-            console.log('正在重连', error);
-          }),
-          client.on('error', (error) => {
-            console.log('连接失败', error);
-          });
-      });
-
-      // let num = 0;
-      // setInterval(function () {
-      //   client.publish('/test/heloo', 'Hello mqtt ' + ++num, { qos: 1 }, () => console.log(num));
-      // }, 6000);
 
       for (const i in expose._eps) {
         expose._eps[i].forEach((e) => {
