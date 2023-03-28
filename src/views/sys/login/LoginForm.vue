@@ -246,7 +246,7 @@
           //   getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
           // });
           //await loadCaptcha();
-          refs.value.captcha.refresh();
+          refs.value['captcha'].refresh();
         } finally {
           loading.value = false;
         }

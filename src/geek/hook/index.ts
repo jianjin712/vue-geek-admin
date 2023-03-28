@@ -2,8 +2,9 @@ import { onBeforeUpdate, ref, /* inject, */ getCurrentInstance } from 'vue';
 //import { useRoute, useRouter } from 'vue-router';
 import { useService } from '../service';
 import { useGlobSetting } from '/@/hooks/setting';
+//import { useRefs } from '/@/hooks/core/useRefs';
 
-export function useRefs() {
+export function _useRefs() {
   const refs: any = ref<any[]>([]);
 
   onBeforeUpdate(() => {
@@ -27,7 +28,7 @@ function named(name: string) {
 }
 
 export function useCode() {
-  //const { refs, setRefs } = useRefs();
+  //const [refs, setRefs] = useRefs();
 
   // 通信
   //const mitt = inject<any>('mitt');

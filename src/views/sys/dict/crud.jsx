@@ -46,17 +46,14 @@ export default function ({ expose, service }) {
             //sortDirections: ['descend'],
           },
           dict: dict({
-            data: [
-              { value: 1, label: '启用', color: 'success' },
-              { value: 0, label: '禁用', color: 'error' },
-            ],
+            url: '/sys/open/getDictCode?code=STATUS',
           }),
           addForm: { value: 1 },
-          // valueBuilder({ value, row, key }) {
-          //   if (value != null) {
-          //     row[key] = value === true ? 1 : 0;
-          //   }
-          // },
+          valueBuilder({ value, row, key }) {
+            if (value != null) {
+              row[key] = value === '1' ? 1 : 0;
+            }
+          },
         },
         readonly: {
           title: '内置',
@@ -69,11 +66,13 @@ export default function ({ expose, service }) {
             },
           },
           dict: dict({
-            data: [
-              { value: 1, label: '是', color: 'success' },
-              { value: 0, label: '否', color: 'error' },
-            ],
+            url: '/sys/open/getDictCode?code=YES_NO',
           }),
+          valueBuilder({ value, row, key }) {
+            if (value != null) {
+              row[key] = value === 1 ? '1' : '0';
+            }
+          },
         },
         orderNum: {
           title: '排序',

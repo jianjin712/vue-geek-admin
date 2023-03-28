@@ -81,7 +81,7 @@
   import { CollapseContainer } from '/@/components/Container/index';
   import { PageWrapper } from '/@/components/Page';
 
-  const qrCodeUrl = 'https://www.vvbin.cn';
+  const qrCodeUrl = 'https://music.qq.com';
   export default defineComponent({
     components: { CollapseContainer, QrCode, PageWrapper },
     setup() {

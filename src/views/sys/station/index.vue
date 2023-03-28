@@ -56,7 +56,7 @@
       });
 
       async function loadOrgList() {
-        await service.base.auth.org.tree().then((ret) => {
+        await service.sys.org.tree().then((ret) => {
           terrData.value = ret;
           setTimeout(() => {
             getTree().filterByLevel(2);

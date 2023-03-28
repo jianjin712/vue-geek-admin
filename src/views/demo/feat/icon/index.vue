@@ -13,6 +13,7 @@
     </CollapseContainer>
 
     <CollapseContainer title="IconIfy 组件使用" class="my-5">
+      <Icon icon="flag:ar-1x1" />
       <div class="flex justify-around flex-wrap">
         <Icon icon="ion:layers-outline" :size="30" />
         <Icon icon="ion:bar-chart-outline" :size="30" />

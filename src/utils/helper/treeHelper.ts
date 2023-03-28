@@ -41,17 +41,20 @@ export function setMenuMeta(menus: any) {
       }
     });
   }
-  function listToTree(list: any[]) {
-    const idMap = {};
-    const tree = [];
-    for (const item of list) {
-      item.name = item?.label || item?.title;
-      idMap[item.id] = item;
-      if (item.parentId == null || item.parentId <= 0) {
-        tree.push(item);
-      }
-    }
-    for (const item of list) {
+  function listToTree(list: Array<any>) {
+    const idMap: any = {};
+    const tree: Array<any> = [];
+    list
+      .filter((k) => k.status != 0)
+      .forEach((e) => {
+        e.name = e?.label || e?.title;
+        idMap[e.id] = e;
+        if (e.parentId == null || e.parentId <= 0) {
+          tree.push(e);
+        }
+      });
+    //for (const item of list) {
+    list.forEach((item) => {
       if (item.parentId > 0) {
         const parent = idMap[item.parentId];
         if (parent) {
@@ -61,7 +64,7 @@ export function setMenuMeta(menus: any) {
           parent.children.push(item);
         }
       }
-    }
+    });
     return tree;
   }
   return listToTree(menus);

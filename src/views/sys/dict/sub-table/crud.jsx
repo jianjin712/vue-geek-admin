@@ -87,11 +87,13 @@ export default function ({ expose, props }) {
           type: 'dict-radio',
           search: { show: true },
           dict: dict({
-            data: [
-              { value: 1, label: '启用', color: 'success' },
-              { value: 0, label: '禁用', color: 'error' },
-            ],
+            url: '/sys/open/getDictCode?code=STATUS',
           }),
+          valueBuilder({ value, row, key }) {
+            if (value != null) {
+              row[key] = value === 1 ? '1' : '0';
+            }
+          },
           addForm: { value: 1 },
           // valueBuilder({ value, row, key }) {
           //   if (value != null) {

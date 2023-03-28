@@ -34,6 +34,11 @@ module.exports = {
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+
+    '@typescript-eslint/no-unused-vars': 'off',
+    'no-unused-vars': 'off',
+    /*
+    开发模式，暂时隐藏
     '@typescript-eslint/no-unused-vars': [
       'error',
       {
@@ -47,7 +52,7 @@ module.exports = {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',
       },
-    ],
+    ], */
     'space-before-function-paren': 'off',
 
     'vue/attributes-order': 'off',

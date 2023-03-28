@@ -105,7 +105,7 @@ const transform: AxiosTransform = {
       config.url = `${urlPrefix}${config.url}`;
     }
 
-    if (config.url?.includes('__cool_')) {
+    if (config.url?.includes('__cool')) {
       return config;
     }
 

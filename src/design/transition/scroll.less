@@ -65,3 +65,24 @@
     transform: translateX(-15px);
   }
 }
+
+// customize style
+.scroller1 {
+  overflow: auto;
+  position: relative;
+  z-index: 9;
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(144, 147, 153, 0.3);
+    border-radius: 6px;
+  }
+
+  &::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+}

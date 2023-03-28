@@ -52,7 +52,7 @@
       width: 80,
       title: 'Action',
       dataIndex: 'action',
-      slots: { customRender: 'action' },
+      //slots: { customRender: 'action' },
     },
   });
   const [registerModal, { openModal }] = useModal();
@@ -66,7 +66,7 @@
     },
     {
       immediate: true,
-    },
+    }
   );
   const { createMessage } = useMessage();
   if (import.meta.env.DEV) {

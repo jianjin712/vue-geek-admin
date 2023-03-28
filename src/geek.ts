@@ -18,6 +18,7 @@ import { setupGlobDirectives } from '/@/directives';
 import { setupI18n } from '/@/locales/setupI18n';
 import { setupAntd } from '/@/locales/setupAntd';
 //import { registerGlobComp } from '/@/components/registerGlobComp';
+import { setupIcon } from '/@/plugin/ant-icon';
 
 if (import.meta.env.MODE === 'development') {
   import('./api/index');
@@ -62,6 +63,10 @@ async function bootstrap() {
 
   // https://next.router.vuejs.org/api/#isready
   await router.isReady();
+
+  //--------------------------------------
+  // Register Ant icon
+  setupIcon(app);
 
   app.mount('#app');
 }

@@ -1122,6 +1122,68 @@ declare interface SysComm {
   };
 }
 
+declare interface SysConfig {
+  /**
+   * getGroups
+   * @returns Promise<any>
+   */
+  getGroups(data?: any): Promise<any>;
+  /**
+   * 删除
+   * @returns Promise<any>
+   */
+  delete(data?: any): Promise<any>;
+  /**
+   * 修改
+   * @returns Promise<any>
+   */
+  update(data?: any): Promise<any>;
+  /**
+   * edit
+   * @returns Promise<any>
+   */
+  edit(data?: any): Promise<any>;
+  /**
+   * 单个信息
+   * @returns Promise<any>
+   */
+  info(data?: any): Promise<any>;
+  /**
+   * 列表查询
+   * @returns Promise<any>
+   */
+  list(data?: any): Promise<any>;
+  /**
+   * 分页查询
+   * @returns Promise<PageResponse>
+   */
+  page(data?: any): Promise<PageResponse>;
+  /**
+   * 新增
+   * @returns Promise<any>
+   */
+  add(data?: any): Promise<any>;
+  /**
+   * action
+   * @returns Promise<any>
+   */
+  action(data?: any): Promise<any>;
+  /**
+   * 权限
+   */
+  permission: {
+    getGroups: string;
+    delete: string;
+    update: string;
+    edit: string;
+    info: string;
+    list: string;
+    page: string;
+    add: string;
+    action: string;
+  };
+}
+
 declare interface SysDict {
   /**
    * 删除
@@ -1446,6 +1508,56 @@ declare interface SysStation {
   };
 }
 
+declare interface CmsApp {
+  /**
+   * 删除
+   * @returns Promise<any>
+   */
+  delete(data?: any): Promise<any>;
+  /**
+   * 修改
+   * @returns Promise<any>
+   */
+  update(data?: any): Promise<any>;
+  /**
+   * 单个信息
+   * @returns Promise<any>
+   */
+  info(data?: any): Promise<any>;
+  /**
+   * 列表查询
+   * @returns Promise<any>
+   */
+  list(data?: any): Promise<any>;
+  /**
+   * 分页查询
+   * @returns Promise<PageResponse>
+   */
+  page(data?: any): Promise<PageResponse>;
+  /**
+   * 新增
+   * @returns Promise<any>
+   */
+  add(data?: any): Promise<any>;
+  /**
+   * action
+   * @returns Promise<any>
+   */
+  action(data?: any): Promise<any>;
+  /**
+   * 权限
+   */
+  permission: {
+    delete: string;
+    update: string;
+    info: string;
+    list: string;
+    page: string;
+    add: string;
+    action: string;
+  };
+}
+
 declare interface DemoGoods {
   /**
    * 删除
@@ -1596,6 +1708,56 @@ declare interface SpaceType {
   };
 }
 
+declare interface SportsGroup {
+  /**
+   * 删除
+   * @returns Promise<any>
+   */
+  delete(data?: any): Promise<any>;
+  /**
+   * 修改
+   * @returns Promise<any>
+   */
+  update(data?: any): Promise<any>;
+  /**
+   * 单个信息
+   * @returns Promise<any>
+   */
+  info(data?: any): Promise<any>;
+  /**
+   * 分页查询
+   * @returns Promise<PageResponse>
+   */
+  page(data?: any): Promise<PageResponse>;
+  /**
+   * 列表查询
+   * @returns Promise<any>
+   */
+  list(data?: any): Promise<any>;
+  /**
+   * 新增
+   * @returns Promise<any>
+   */
+  add(data?: any): Promise<any>;
+  /**
+   * action
+   * @returns Promise<any>
+   */
+  action(data?: any): Promise<any>;
+  /**
+   * 权限
+   */
+  permission: {
+    delete: string;
+    update: string;
+    info: string;
+    page: string;
+    list: string;
+    add: string;
+    action: string;
+  };
+}
+
 declare interface TaskInfo {
   /**
    * 删除
@@ -1690,6 +1852,7 @@ declare type Service = {
     open: SysOpen;
     admin: SysAdmin;
     comm: SysComm;
+    config: SysConfig;
     dict: SysDict;
     dictitem: SysDictitem;
     menu: SysMenu;
@@ -1697,7 +1860,9 @@ declare type Service = {
     role: SysRole;
     station: SysStation;
   };
+  cms: { app: CmsApp };
   demo: { goods: DemoGoods };
   space: { info: SpaceInfo; type: SpaceType };
+  sports: { group: SportsGroup };
   task: { info: TaskInfo };
 };

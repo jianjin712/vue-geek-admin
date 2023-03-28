@@ -1,5 +1,7 @@
 <template>
-  <fs-crud ref="crudRef" v-bind="crudBinding" />
+  <fs-page class="page-layout-card">
+    <fs-crud ref="crudRef" v-bind="crudBinding" />
+  </fs-page>
 </template>
 
 <script>
@@ -33,3 +35,9 @@
     },
   });
 </script>
+
+<style lang="less">
+  .page-layout-card {
+    background-color: #eee;
+  }
+</style>

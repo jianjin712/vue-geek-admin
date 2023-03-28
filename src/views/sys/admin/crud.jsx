@@ -66,6 +66,47 @@ export default function ({ expose, curdApi }) {
             ],
           },
         },
+        orgId: {
+          title: '组织',
+          search: { show: false, component: { style: { width: '150px' } } },
+          type: 'dict-tree',
+          column: {
+            width: 180,
+            component: {
+              style: {
+                color: 'red',
+              },
+            },
+          },
+          dict: dict({
+            isTree: true,
+            cache: true,
+            url: '/sys/org/tree',
+            value: 'id',
+            label: 'label',
+          }),
+          form: {
+            component: {
+              fieldNames: { children: 'children', title: 'label', key: 'id', value: 'id' },
+              showSearch: true,
+              filterTreeNode: (val, treeNode) => {
+                return treeNode.props.title.toLowerCase().indexOf(val.toLowerCase()) >= 0;
+              },
+            },
+            valueChange({ form, value, getComponentRef }) {
+              form.stationId = undefined; // 将“stationId”的值置空
+              if (value) {
+                // 执行 station_id 的select组件的reloadDict()方法，触发“stationId”重新加载字典
+                getComponentRef('stationId').reloadDict();
+              }
+            },
+            valueResolve(context) {
+              //value解析，就是把组件的值转化为后台所需要的值
+              //在form表单点击保存按钮后，提交到后台之前执行转化
+              context.form.orgId = Number(context.form.orgId);
+            },
+          },
+        },
         mobile: {
           title: '手机号',
           type: 'text',
@@ -82,7 +123,7 @@ export default function ({ expose, curdApi }) {
           title: '性别',
           type: 'dict-radio',
           dict: dict({
-            url: '/base/open/getDictCode?code=SEX',
+            url: '/sys/open/getDictCode?code=SEX',
           }),
           // viewForm: {
           //   valueBuilder(context) {
@@ -103,6 +144,10 @@ export default function ({ expose, curdApi }) {
               { text: '男', value: 1 },
               { text: '女', value: 2 },
             ],
+            onFilter: (value, record) => {
+              return record.sex === value;
+            },
+            //sorter: (a, b) => a.sex - b.sex,
             sortDirections: ['descend'],
           },
           addForm: {
@@ -145,51 +190,11 @@ export default function ({ expose, curdApi }) {
             },
           },
         },
-        orgId: {
-          title: '组织',
-          search: { show: false, component: { style: { width: '150px' } } },
-          type: 'dict-tree',
-          column: {
-            width: 180,
-            component: {
-              style: {
-                color: 'red',
-              },
-            },
-          },
-          dict: dict({
-            isTree: true,
-            cache: true,
-            url: '/sys/org/tree',
-            value: 'id',
-            label: 'label',
-          }),
-          form: {
-            component: {
-              fieldNames: { children: 'children', title: 'label', key: 'id', value: 'id' },
-              showSearch: true,
-              filterTreeNode: (val, treeNode) => {
-                return treeNode.props.title.toLowerCase().indexOf(val.toLowerCase()) >= 0;
-              },
-            },
-            valueChange({ form, value, getComponentRef }) {
-              form.stationId = undefined; // 将“stationId”的值置空
-              if (value) {
-                // 执行 station_id 的select组件的reloadDict()方法，触发“stationId”重新加载字典
-                getComponentRef('stationId').reloadDict();
-              }
-            },
-            valueResolve(context) {
-              //value解析，就是把组件的值转化为后台所需要的值
-              //在form表单点击保存按钮后，提交到后台之前执行转化
-              context.form.orgId = Number(context.form.orgId);
-            },
-          },
-        },
+
         stationId: {
           title: '岗位',
           type: 'dict-select',
-          column: { width: 150 },
+          column: { width: 150, show: false },
           dict: dict({
             cache: true,
             prototype: true,
@@ -198,7 +203,7 @@ export default function ({ expose, curdApi }) {
             // url({ form }) {
             //   if (form && form._i != null) {
             //     // 本数据字典的url是通过前一个select的选项决定的
-            //     return `/base/data/stations?status=1&orgId=${form._i}`;
+            //     return `/sys/data/stations?status=1&orgId=${form._i}`;
             //   }
             //   return undefined;
             // },
@@ -233,7 +238,7 @@ export default function ({ expose, curdApi }) {
         positionStatus: {
           title: '职位状态',
           type: 'dict-select',
-          column: { width: 90 },
+          column: { width: 90, show: false },
           dict: dict({
             data: [
               { value: 'WORKING', label: '在职', color: 'success' },
@@ -245,10 +250,10 @@ export default function ({ expose, curdApi }) {
         nation: {
           title: '民族',
           type: 'dict-select',
-          column: { width: 90 },
+          column: { width: 90, show: false },
           dict: dict({
             code: 'NATION',
-            url: '/base/open/getDictCode?code=NATION',
+            url: '/sys/open/getDictCode?code=NATION',
           }),
           form: {
             component: {
@@ -262,9 +267,9 @@ export default function ({ expose, curdApi }) {
         education: {
           title: '学历',
           type: 'dict-select',
-          column: { width: 90 },
+          column: { width: 90, show: false },
           dict: dict({
-            url: '/base/open/getDictCode?code=EDUCATION',
+            url: '/sys/open/getDictCode?code=EDUCATION',
           }),
           form: {
             component: {
@@ -275,7 +280,7 @@ export default function ({ expose, curdApi }) {
             },
           },
         },
-        createdTime: {
+        createTime: {
           title: '创建时间',
           type: 'datetime',
           column: { width: 180, sorter: true },
@@ -295,22 +300,28 @@ export default function ({ expose, curdApi }) {
       form: {
         display: 'flex',
         group: {
-          type: 'tab', // tab
           accordion: false, //手风琴模式
+          groupType: 'tabs', //collapse， tabs
+          animated: { inkBar: true, tabPane: true },
+          tabPosition: 'top',
           groups: {
             baseInfo: {
+              tab: '基础信息',
               header: '基础信息',
               columns: ['username', 'password', 'nickName', 'sex', 'status'],
             },
             orgInfo: {
+              tab: '职位信息',
               header: '职位信息',
               columns: ['orgId', 'stationId', 'positionStatus'],
             },
             linkInfo: {
+              tab: '联系方式',
               header: '联系方式',
               columns: ['mobile', 'email'],
             },
             otherInfo: {
+              tab: '其它信息',
               header: '其它信息',
               collapsed: false, //默认折叠
               columns: ['nation', 'education', 'avatar', 'createdTime'],

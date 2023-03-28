@@ -272,6 +272,73 @@ declare interface BaseSysUserEntity {
   [key: string]: any;
 }
 
+declare interface CmsAppModel {
+  /**
+   * ID
+   */
+  id?: number;
+  /**
+   * 所属会员
+   */
+  userId?: number;
+  /**
+   * 应用分组
+   */
+  parentId?: number;
+  /**
+   * 应用名称
+   */
+  name?: string;
+  /**
+   * 应用AppId
+   */
+  appId?: number;
+  /**
+   * 应用AppSecret
+   */
+  appSecret?: string;
+  /**
+   * 网站名称
+   */
+  siteName?: string;
+  /**
+   * 网站域名
+   */
+  siteDomain?: string;
+  /**
+   * 授权回调域
+   */
+  callbackDomain?: string;
+  /**
+   * 应用描述
+   */
+  desc?: string;
+  /**
+   * 接口权限
+   */
+  auth?: string;
+  /**
+   * 访问白名单
+   */
+  whitelist?: string;
+  /**
+   * 状态(1显示0隐藏)
+   */
+  status?: boolean;
+  /**
+   * 创建时间
+   */
+  createTime?: Date;
+  /**
+   * 更新时间
+   */
+  updateTime?: Date;
+  /**
+   * 任意键值
+   */
+  [key: string]: any;
+}
+
 declare interface DemoGoodsEntity {
   /**
    * ID
@@ -351,6 +418,49 @@ declare interface SpaceTypeEntity {
    * 父分类ID
    */
   parentId?: number;
+  /**
+   * 创建时间
+   */
+  createTime?: Date;
+  /**
+   * 更新时间
+   */
+  updateTime?: Date;
+  /**
+   * 任意键值
+   */
+  [key: string]: any;
+}
+
+declare interface DataapiGroupModel {
+  /**
+   * ID
+   */
+  id?: number;
+  /**
+   * 分组名称
+   */
+  name?: string;
+  /**
+   * 状态(1显示，0隐藏)
+   */
+  status?: boolean;
+  /**
+   * 角色权限
+   */
+  roleId?: string;
+  /**
+   * 排序
+   */
+  orderNum?: number;
+  /**
+   * 配置选项
+   */
+  option?: string;
+  /**
+   * 分组描述
+   */
+  desc?: string;
   /**
    * 创建时间
    */
@@ -470,6 +580,69 @@ declare interface SysAdminModel {
   [key: string]: any;
 }
 
+declare interface SysConfigModel {
+  /**
+   * ID
+   */
+  id?: number;
+  /**
+   * undefined
+   */
+  title?: string;
+  /**
+   * undefined
+   */
+  parentId?: smallint;
+  /**
+   * undefined
+   */
+  code?: string;
+  /**
+   * undefined
+   */
+  type?: string;
+  /**
+   * undefined
+   */
+  storeRange?: string;
+  /**
+   * undefined
+   */
+  value?: string;
+  /**
+   * undefined
+   */
+  explain?: string;
+  /**
+   * undefined
+   */
+  seqNo?: number;
+  /**
+   * undefined
+   */
+  status?: boolean;
+  /**
+   * 是否生成JS配置
+   */
+  isjs?: number;
+  /**
+   * 底层参数则不显示
+   */
+  noShow?: number;
+  /**
+   * 创建时间
+   */
+  createTime?: Date;
+  /**
+   * 更新时间
+   */
+  updateTime?: Date;
+  /**
+   * 任意键值
+   */
+  [key: string]: any;
+}
+
 declare interface SysDictModel {
   /**
    * ID
@@ -489,7 +662,7 @@ declare interface SysDictModel {
    */
   description?: string;
   /**
-   * 状态
+   * 状态 0:禁用 1:启用
    */
   status?: boolean;
   /**

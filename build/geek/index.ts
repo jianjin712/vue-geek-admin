@@ -34,7 +34,9 @@ export const configGeek = (): Plugin | null => {
               next = createEps(body);
               break;
           }
-
+          // console.log('++++ next ++++');
+          // console.log(next);
+          // console.log(typeof next);
           if (next) {
             next
               .then((data: any) => {

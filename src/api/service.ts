@@ -144,7 +144,7 @@ function createRequestFunction(service) {
       // 超时时间 10 秒
       timeout: 1000 * 10,
       baseURL: globSetting.apiUrl,
-      data: {},
+      //data: {},
     };
     return service(Object.assign(configDefault, config));
   };

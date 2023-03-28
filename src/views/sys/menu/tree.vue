@@ -2,37 +2,46 @@
   <fs-page>
     <fs-crud ref="crudRef" v-bind="crudBinding">
       <template #cell_label="scope">
-        <Icon :icon="scope.row.icon" v-if="scope.row.icon" />
-        <Icon icon="ant-design:function-outlined" v-else />
-        {{ scope.row.label }}
-      </template>
-      <template #actionbar-left>
-        <a-tooltip title="批量删除">
-          <fs-button icon="DeleteOutlined" @click="handleBatchDelete" />
-        </a-tooltip>
+        <a-space>
+          <Icon :icon="scope.row.icon" v-if="scope.row.icon" />
+          <Icon icon="ant-design:function-outlined" v-else />
+          <span :class="!scope.row.status ? 'text-gray-500' : ''">{{ scope.row.label }}</span>
+        </a-space>
       </template>
 
+      <!-- <template #actionbar-left>
+        <fs-button type="danger">actionbar-left插槽</fs-button>
+      </template>
       <template #actionbar-right>
+        <fs-button type="danger">actionbar-right插槽</fs-button>
+      </template>
+
+      <template #actionbar--left>
+        <a-tooltip title="批量删除">
+          <fs-button type="danger" icon="DeleteOutlined" @click="handleBatchDelete" />
+        </a-tooltip>
+      </template> -->
+
+      <!-- <template #actionbar--right>
         <a-tooltip title="创建功能模块">
           <fs-button icon="ant-design:appstore-add-outlined" @click="openFormModule" />
           <fs-form-wrapper title="快速创建模块" ref="moduleRef" v-bind="moduleFormOptions" />
         </a-tooltip>
-      </template>
+      </template> -->
+      <fs-form-wrapper title="快速创建模块" ref="moduleRef" v-bind="moduleFormOptions" />
     </fs-crud>
   </fs-page>
 </template>
 
 <script>
   import { defineComponent, ref, onMounted } from 'vue';
-  import createCrudOptions from './tree';
   import { useExpose, useCrud } from '@fast-crud/fast-crud';
-  import { message, Modal } from 'ant-design-vue';
   import { Icon } from '/@/components/Icon';
   //import { useAppStore } from '/@/store/modules/app';
   import * as _ from 'lodash-es';
   import { useCode } from '/@/geek/index';
-  import { useModuleForm } from './module';
   import storage from '/@/utils/storage';
+  import createCrudOptions from './tree';
 
   export default defineComponent({
     name: 'MenuTree',
@@ -78,49 +87,36 @@
         });
       }
       //console.log(expose.eps.api);
+
       // 你的crud配置
-      const { crudOptions, selectedRowKeys } = createCrudOptions({
-        expose,
-        service,
-      });
+      const { crudOptions, selectedRowKeys, moduleRef, openFormModule, moduleFormOptions } =
+        createCrudOptions({
+          expose,
+          service,
+        });
 
       // 初始化crud配置
       // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
-      const { resetCrudOptions } = useCrud({ expose, crudOptions });
-
+      //const { resetCrudOptions } = useCrud({ expose, crudOptions });
+      // 初始化crud配置
+      useCrud({ expose, crudOptions, permission: 'sys:menu' });
       // 你可以调用此方法，重新初始化crud配置
-      // resetCrudOptions(options)
-      const { moduleRef, openFormModule, moduleFormOptions } = useModuleForm(service, expose._eps);
+      //resetCrudOptions(crudOptions);
+
+      //const { moduleRef, openFormModule, moduleFormOptions } = useModuleForm(service, expose._eps);
 
       // 页面打开后获取列表数据
       onMounted(() => {
         expose.doRefresh();
+        //console.log('expose', expose);
+        //console.log('crudOptions');
       });
 
-      const handleBatchDelete = () => {
-        if (selectedRowKeys.value?.length > 0) {
-          Modal.confirm({
-            title: '确认',
-            content: `确定要批量删除这${selectedRowKeys.value.length}条记录吗`,
-            async onOk() {
-              await service.sys.menu.delete({ ids: selectedRowKeys.value }).then((res) => {
-                if (res.code == 1000) {
-                  message.info('删除成功');
-                  expose.doRefresh();
-                  selectedRowKeys.value = [];
-                }
-              });
-            },
-          });
-        } else {
-          message.error('请先勾选记录');
-        }
-      };
+      //console.log(rules);
 
       return {
         crudBinding,
         crudRef,
-        handleBatchDelete,
         moduleRef,
         openFormModule,
         moduleFormOptions,

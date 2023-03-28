@@ -29,11 +29,15 @@
   const schema: DescItem[] = [];
   const devSchema: DescItem[] = [];
 
-  const commonTagRender = (color: string) => (curVal) => h(Tag, { color }, () => curVal);
-  const commonLinkRender = (text: string) => (href) => h('a', { href, target: '_blank' }, text);
+  const commonTagRender = (color: string) => (curVal: any) => h(Tag, { color }, () => curVal);
+  const commonLinkRender = (text: string) => (href: any) =>
+    h('a', { href, target: '_blank' }, text);
 
+  // service.sys.open.live().then((r) => {
+  //   console.log(r);
+  // });
   service.sys.open.live().then((r) => {
-    console.log(r.data);
+    console.log(r);
   });
 
   const infoSchema: DescItem[] = [

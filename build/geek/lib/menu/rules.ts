@@ -2,25 +2,25 @@ export default [
   {
     test: ['avatar', 'img', 'image', 'pic', 'photo', 'picture', 'head', 'icon'],
     table: {
-      name: 'cl-image',
+      type: 'image-uploader',
       props: {
         size: 60,
       },
     },
     form: {
-      name: 'cl-upload',
+      type: 'image-uploader',
     },
   },
   {
     test: ['avatars', 'imgs', 'images', 'pics', 'photos', 'pictures', 'heads', 'icons'],
     table: {
-      name: 'cl-image',
+      type: 'image-uploader',
       props: {
         size: 60,
       },
     },
     form: {
-      name: 'cl-upload',
+      type: 'image-uploader',
       props: {
         listType: 'picture-card',
         multiple: true,
@@ -30,10 +30,10 @@ export default [
   {
     test: ['file', 'attachment', 'attach', 'url', 'video', 'music'],
     table: {
-      name: 'a-link',
+      type: 'a-link',
     },
     form: {
-      name: 'cl-upload',
+      type: 'image-uploader',
       props: {
         listType: 'text',
         limit: 1,
@@ -43,10 +43,10 @@ export default [
   {
     test: ['files', 'attachments', 'attachs', 'urls', 'videos', 'musics'],
     table: {
-      name: 'a-link',
+      type: 'a-link',
     },
     form: {
-      name: 'cl-upload',
+      type: 'cl-upload',
       props: {
         listType: 'text',
         multiple: true,
@@ -55,16 +55,25 @@ export default [
   },
   {
     test: ['enable', 'status'],
-    table: {
-      name: 'dict-switch',
-    },
-    form: {
-      name: 'dict-switch',
-    },
+    handler: 'dict',
+    // table: {
+    //   type: 'dict-radio',
+    // },
+    // form: {
+    //   type: 'dict-radio',
+    //   dict: dictDo({
+    //     url: '/sys/open/getDictCode?code=STATUS',
+    //   }),
+    //   valueBuilder: ({ value, row, key }) => {
+    //     if (value != null) {
+    //       row[key] = value === 1 ? '1' : '0';
+    //     }
+    //   },
+    // },
   },
   {
     test: ['type', 'classify', 'category'],
-    handler: 'dict',
+    //handler: 'dict',
   },
   {
     test: ['types', 'classifys', 'categorys'],
@@ -73,30 +82,34 @@ export default [
   {
     test: ['date'],
     table: {
-      name: 'cl-date-text',
+      type: 'a-date-text',
       props: {
         format: 'YYYY-MM-DD',
       },
     },
     form: {
-      name: 'el-date-picker',
-      props: {
-        type: 'date',
-        valueFormat: 'YYYY-MM-DD',
+      form: {
+        component: {
+          name: 'a-date-picker',
+          //props: {
+          //type: 'date',
+          valueFormat: 'YYYY-MM-DD',
+          //},
+        },
       },
     },
   },
   {
     test: ['dates', 'dateRange', 'dateScope'],
     table: {
-      name: 'cl-date-text',
+      type: 'a-date-text',
       props: {
         format: 'YYYY-MM-DD',
       },
     },
     form: {
       component: {
-        name: 'el-date-picker',
+        type: 'a-date-picker',
         props: {
           type: 'daterange',
           valueFormat: 'YYYY-MM-DD',
@@ -107,10 +120,11 @@ export default [
   {
     test: ['time'],
     form: {
-      name: 'el-date-picker',
+      type: 'a-date-picker',
       props: {
         type: 'datetime',
         valueFormat: 'YYYY-MM-DD HH:mm:ss',
+        defaultTime: [new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)],
       },
     },
   },
@@ -118,7 +132,7 @@ export default [
     test: ['times', 'timeRange', 'timeScope'],
     form: {
       component: {
-        name: 'el-date-picker',
+        type: 'a-date-picker',
         props: {
           type: 'datetimerange',
           valueFormat: 'YYYY-MM-DD HH:mm:ss',
@@ -130,22 +144,22 @@ export default [
   {
     test: ['star', 'stars'],
     table: {
-      name: 'el-rate',
+      type: 'a-rate',
       props: {
         disabled: true,
       },
     },
     form: {
-      name: 'el-rate',
+      type: 'a-rate',
     },
   },
   {
     test: ['progress', 'rate', 'ratio'],
     table: {
-      name: 'el-progress',
+      type: 'a-progress',
     },
     form: {
-      name: 'el-slider',
+      type: 'a-slider',
       props: {
         style: {
           width: '200px',
@@ -156,9 +170,13 @@ export default [
   {
     test: ['num', 'price', 'age', 'amount'],
     form: {
-      name: 'el-input-number',
-      props: {
-        min: 0,
+      //type: 'a-input-number',
+      form: {
+        component: {
+          name: 'a-input-number',
+          min: 0,
+          vModel: 'modelValue',
+        },
       },
     },
   },
@@ -168,7 +186,7 @@ export default [
       showOverflowTooltip: true,
     },
     form: {
-      name: 'el-input',
+      type: 'textarea',
       props: {
         type: 'textarea',
         rows: 4,
@@ -178,23 +196,30 @@ export default [
   {
     test: ['rich', 'text', 'html', 'content', 'introduce', 'description', 'desc'],
     table: {
-      name: 'textarea',
+      type: ['textarea', 'rows'],
     },
     form: {
-      name: 'textarea',
-      props: {
-        placeholder: '请填写描述信息',
-        rows: 4,
+      //type: 'textarea',
+      // props: {
+      //   placeholder: '请填写描述信息',
+      //   rows: 4,
+      // },
+      type: ['textarea', 'rows'],
+      form: {
+        component: {
+          placeholder: '请填写描述信息',
+          rows: 2,
+        },
       },
     },
   },
   {
-    test: ['code', 'codes'],
+    test: ['codes'],
     table: {
-      name: 'cl-codemirror',
+      type: 'a-codemirror',
     },
     form: {
-      name: 'cl-codemirror',
+      type: 'a-codemirror',
       props: {
         height: 400,
       },
@@ -203,13 +228,46 @@ export default [
   {
     test: ['createTime'],
     table: {
-      sortable: 'desc',
+      type: 'datetime',
+      column: {
+        sortable: 'custom',
+      },
+    },
+    form: {
+      type: 'datetime',
+      column: {
+        sortable: 'custom',
+      },
+      valueBuilder: ({ value, row, key }) => {
+        if (value != null) {
+          row[key] = moment(value);
+        }
+      },
     },
   },
   {
     test: ['updateTime'],
     table: {
-      sortable: 'custom',
+      type: 'datetime',
+      column: {
+        sortable: 'custom',
+      },
+      //sortable: 'custom',
+    },
+    form: {
+      type: 'datetime',
+      column: {
+        sortable: 'custom',
+      },
+      valueBuilder({ value, row, key }) {
+        if (value != null) {
+          row[key] = moment(value);
+        }
+      },
     },
   },
 ];
+
+const moment = (str: string) => {
+  return str;
+};

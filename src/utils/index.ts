@@ -98,15 +98,33 @@ export function deepTree(list: Array<any>) {
   const newList: Array<any> = [];
   const map: any = {};
 
-  list.forEach((e) => (map[e.id] = e));
+  //list.forEach((e) => (map[e.id] = e));
+  list.forEach((e) => {
+    map[e.id] = e;
+    if (e.parentId == null || e.parentId <= 0) {
+      newList.push(e);
+    }
+  });
 
   list.forEach((e) => {
-    const parent = map[e.parentId];
+    //const parent = map[e.parentId];
 
-    if (parent) {
-      (parent.children || (parent.children = [])).push(e);
-    } else {
-      newList.push(e);
+    // if (parent) {
+    //   (parent.children || (parent.children = [])).push(e);
+    // } else {
+    //   newList.push(e);
+    // }
+    if (e.parentId > 0) {
+      const parent = map[e.parentId];
+      if (parent) {
+        if (parent.children == null) {
+          parent.children = [];
+        }
+        parent.children.push(e);
+      }
+      /*  else {
+        newList.push(e);
+      } */
     }
   });
 
@@ -122,7 +140,8 @@ export function deepTree(list: Array<any>) {
 
   fn(newList);
 
-  return orderBy(newList, 'orderNum');
+  return newList;
+  //orderBy(newList, 'orderNum');
 }
 
 export function revDeepTree(list: Array<any> = []) {
@@ -148,4 +167,23 @@ export function revDeepTree(list: Array<any> = []) {
   deep(list || [], null);
 
   return d;
+}
+
+/**
+ * 筛选排序字段数据
+ * @treeList 树形数据列表
+ * @filter 排除的字段
+ * */
+export function filterData(treeList: Array<any> = [], filter: string) {
+  return treeList
+    .filter((item) => {
+      return item[filter] == 1;
+    })
+    .map((item) => {
+      item = Object.assign({}, item);
+      if (item?.children) {
+        item.children = filterData(item.children, filter);
+      }
+      return item;
+    });
 }

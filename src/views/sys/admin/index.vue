@@ -1,11 +1,13 @@
 <template>
-  <fs-crud ref="crudRef" v-bind="crudBinding">
-    <template #cell_nickName="scope">
-      <a-tooltip placement="top" :title="scope.row.nickName">
-        {{ scope.row.nickName }}
-      </a-tooltip>
-    </template>
-  </fs-crud>
+  <fs-page>
+    <fs-crud ref="crudRef" v-bind="crudBinding">
+      <template #cell_nickName="scope">
+        <a-tooltip placement="top" :title="scope.row.nickName">
+          {{ scope.row.nickName }}
+        </a-tooltip>
+      </template>
+    </fs-crud>
+  </fs-page>
 </template>
 
 <script>

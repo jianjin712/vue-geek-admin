@@ -1,19 +1,22 @@
 /* eslint-disable prettier/prettier */
+import { unref } from 'vue';
 import { defHttp } from '/@/utils/http/axios';
+import { request } from '/@/api/service';
 import { FastCrud/* , setLogger */ } from '@fast-crud/fast-crud';
 import '@fast-crud/fast-crud/dist/style.css';
-import { FsExtendsEditor, FsExtendsUploader } from '@fast-crud/fast-extends';
+import { FsExtendsEditor, FsExtendsUploader, FsExtendsJson } from '@fast-crud/fast-extends';
 import '@fast-crud/fast-extends/dist/style.css';
 import UiAntdv from '@fast-crud/ui-antdv';
 import { useCrudPermission } from '/@/plugin/permission/use-crud-permission';
 import * as _ from 'lodash-es';
+import { getToken /* , getUserInfo */ } from '/@/utils/auth';
 
+const token = getToken();
 // 导出 setupFastCrud
 // 国际化配置见 /src/locales/en  or zh_CN
 export default function (app, i18n) {
   //先安装ui
   app.use(UiAntdv);
-  //setLogger({ level: 'info' });
   //再安装fast-crud
   app.use(FastCrud, {
     i18n,
@@ -24,13 +27,17 @@ export default function (app, i18n) {
       })
     },
     commonOptions (context) {
+      const crudBinding = unref(context.crudBinding);
       const opts = {
+        search: {
+          show: false
+        },
         toolbar: {
-          search: false,
+          search: true,
           // toolbar.buttons.export.show:false 显示隐藏
           // toolbar.compact:false 默认选择
-          compact: false,
-          export: true,
+          compact: true,
+          export: { show: true },
           // 列设置按钮
           // columns: {
           //   columnsFilter: {
@@ -38,12 +45,15 @@ export default function (app, i18n) {
           //   }
           // }
         },
-        actionbar: {
-          buttons: {
-            add: {
-              icon: 'akar-icons:circle-plus',
-            },
-          },
+        // actionbar: {
+        //   buttons: {
+        //     add: {
+        //       icon: 'akar-icons:circle-plus',
+        //     },
+        //   },
+        // },
+        container: {
+          is: 'fs-layout-card',
         },
         rowHandle: {
           width: 130,
@@ -67,10 +77,17 @@ export default function (app, i18n) {
             //需要设置它，否则滚动条拖动时，表头不会动
             fixed: false,
           },
+          // onResizeColumn: (w, col) => {
+          //   //触发resize事件后，修改column宽度，width只能配置为number类型
+          //   //可以将此方法写在app.use()中的commonOptions里面
+          //   console.log(crudBinding)
+          //   crudBinding.table.columnsMap[col.key].width = w;
+          // },
           pagination: false,
         },
         pagination: {
           pageSize: 10,
+          //hideOnSinglePage: true
         },
         request: {
           transformQuery: ({ page, form, sort }) => {
@@ -129,8 +146,9 @@ export default function (app, i18n) {
           //col: { span: 24 },
           display: 'flex',
           // labelCol: { style: { width: "200px" } }
-          // labelCol: { span: 4 },
-          // wrapperCol: { span: 20 },
+          labelAlign: 'right',
+          labelCol: { span: 8 },
+          wrapperCol: { span: 14 },
           //labelColWidth: 100,
           wrapper: {
             is: 'a-drawer',
@@ -146,6 +164,8 @@ export default function (app, i18n) {
   });
 
   app.use(FsExtendsEditor);
+  // JSON 编辑器
+  app.use(FsExtendsJson);
   //配置uploader 公共参数
   app.use(FsExtendsUploader, {
     defaultType: 'form',
@@ -195,7 +215,7 @@ export default function (app, i18n) {
         // 上传完成后可以在此处处理结果，修改url什么的
         console.log('success handle:', ret);
         return ret;
-      },
+      }
     },
     qiniu: {
       bucket: 'battcn',
@@ -222,18 +242,23 @@ export default function (app, i18n) {
     },
     form: {
       //action: 'http://www.docmirror.cn:7070/api/upload/form/upload',
-      action: '/cool/admin/base/comm/upload',
+      // /admin/cool/admin/sys/comm/upload Not Found
+      action: '/cool/admin/sys/comm/upload',
       name: 'file',
       withCredentials: false,
-      // async getToken () {
-      //   return defHttp.request({ url: '/tools/files/token', method: 'get' });
+      headers: {
+        Authorization: getToken(),
+      },
+      // async getAuthorization () {
+      //   return token;
       // },
+      //{ action, file }
       successHandle (ret) {
         console.log('ret ==> ', ret);
         // 上传完成后的结果处理， 此处后台返回的结果应该为 ret = {code:0,msg:'',data:fileUrl}
-        if (!ret.data) {
-          throw new Error('上传失败');
-        }
+        // if (!ret) {
+        //   throw new Error('上传失败');
+        // }
         return {
           url: ret.data,
         };

@@ -9,7 +9,7 @@
         <hr class="my-4" />
 
         <div class="flex">
-          <a-input v-model:value="server" disabled>
+          <a-input :value="server">
             <template #addonBefore> 服务地址 </template>
           </a-input>
           <a-button :type="getIsOpen ? 'danger' : 'primary'" @click="toggle">
@@ -35,7 +35,7 @@
         <span class="text-lg font-medium mr-4"> 消息记录: </span>
         <hr class="my-4" />
 
-        <div class="max-h-80 overflow-auto">
+        <div class="max-h-80 overflow-auto chat-dialog-cont">
           <ul>
             <li v-for="item in getList" class="mt-2" :key="item.time">
               <div class="flex items-center">
@@ -68,7 +68,8 @@
     },
     setup() {
       const state = reactive({
-        server: 'ws://localhost:3300/test',
+        // server: 'ws://localhost:3300/chat',
+        server: 'ws://127.0.0.1:8002',
         sendValue: '',
         recordList: [] as { id: number; time: number; res: string }[],
       });
@@ -125,3 +126,20 @@
     },
   });
 </script>
+
+<style>
+  .chat-dialog-cont {
+    height: 392px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-top: 1px solid #d4d4d4;
+    transform: rotate(180deg);
+    direction: rtl;
+    text-align: left;
+
+    ul {
+      overflow: hidden;
+      transform: rotate(180deg);
+    }
+  }
+</style>

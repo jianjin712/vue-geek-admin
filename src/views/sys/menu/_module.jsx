@@ -2,7 +2,255 @@ import { ref, shallowRef } from 'vue';
 import { dict, uiContext, compute, useColumns, useExpose } from '@fast-crud/fast-crud';
 import { IconPicker } from '/@/components/Icon';
 import { deepTree } from '/@/utils';
-import { last, isEmpty } from 'lodash-es';
+import { last, isEmpty, isFunction, isRegExp, isString } from 'lodash-es';
+
+import rules from '/build/geek/lib/menu/rules';
+
+// 格式化
+function format(data) {
+  //const prop = data.prop;
+  const result = {
+    title: data.label,
+    //prop: data.prop,
+    ...data,
+    //component: data.component,
+  };
+  return result;
+}
+// 颜色
+const colors = [
+  '#409EFF',
+  '#67C23A',
+  '#E6A23C',
+  '#F56C6C',
+  '#909399',
+  '#B0CFEB',
+  '#FF9B91',
+  '#E6A23C',
+  '#BFAD6F',
+  '#FB78F2',
+];
+
+const dictFn = 'dict';
+
+// 组件处理器
+const handler = {
+  // 单选
+  dict({ comment }) {
+    const [title, ...arr] = comment.split(' ');
+
+    // 选择列表
+    const list = arr.map((e, i) => {
+      const [value, label] = e.split(':');
+      const d = {
+        label,
+        value: isNaN(Number(value)) ? value : Number(value),
+      };
+
+      if (colors[i]) {
+        d.color = colors[i];
+      }
+
+      return d;
+    });
+    //console.log(list);
+
+    const d = {
+      columns: {
+        title,
+        dict: dict({
+          //data: list,
+          url: '/sys/open/getDictCode?code=STATUS',
+        }),
+      },
+      form: {
+        title,
+        // component: {
+        //   name: '',
+        //   options: list,
+        // },
+        dict:
+          dictFn +
+          `({
+          url: '/sys/open/getDictCode?code=STATUS',
+        })`,
+        // valueBuilder: ({ value, row, key }) => {
+        //   if (value != null) {
+        //     row[key] = value === 1 ? '1' : '0';
+        //   }
+        // },
+      },
+    };
+
+    // 默认值
+    // if (list[0]) {
+    //   //d.form.value = list[0].value;
+    //   d.form.addForm.value = list[0].value;
+    // }
+
+    // 匹配组件
+    //d.form.component.name = arr.length > 4 ? 'dict-select' : 'dict-radio';
+    d.form.type = arr.length > 4 ? 'dict-select' : 'dict-radio';
+
+    return d;
+  },
+
+  // 多选
+  dict_multiple({ comment }) {
+    const { table, form } = handler.dict({ comment });
+
+    if (!form.component.props) {
+      form.component.props = {};
+    }
+
+    if (!form.value) {
+      form.value = [];
+    }
+
+    switch (form.type) {
+      case 'dict-select':
+        form.component.props.multiple = true;
+        form.component.props.filterable = true;
+        break;
+      case 'dict-radio':
+        form.component.name = 'a-radio-group';
+        break;
+    }
+
+    return {
+      table,
+      form,
+    };
+  },
+};
+
+function createComponent(item) {
+  const { propertyName: field, comment: title /* , type */ } = item;
+  // propertyName: 'id', type: 'number', length: '', comment: 'ID', nullable: false
+  // {propertyName: 'name', type: 'string', length: '', comment: '菜单名称', nullable: false}
+  // {propertyName: 'type', type: 'tinyint', length: '', comment: '类型 0：目录 1：菜单 2：按钮', nullable: false}
+
+  let d = null;
+
+  rules.forEach((r) => {
+    const s = r.test.find((e) => {
+      if (isRegExp(e)) {
+        return e.test(field);
+      }
+
+      if (isFunction(e)) {
+        return e(field);
+      }
+
+      if (isString(e)) {
+        const re = new RegExp(`${e}$`);
+        return re.test(field.toLocaleLowerCase());
+      }
+
+      return false;
+    });
+
+    if (s) {
+      if (r.handler) {
+        const fn = isString(r.handler) ? handler[r.handler] : r.handler;
+
+        if (isFunction(fn)) {
+          d = fn(item);
+        }
+      } else {
+        d = {
+          ...r,
+          test: undefined,
+        };
+      }
+    }
+  });
+
+  function parse(v) {
+    //console.log('parse', ...v);
+    if (v?.type) {
+      return {
+        title,
+        key: field,
+        ...v,
+        //column: {},
+        search: {},
+        // addForm: {},
+        // editForm: {},
+      };
+    } else {
+      return {
+        title,
+        type: 'text',
+        key: field,
+        ...v,
+      };
+    }
+  }
+
+  function queue(v) {
+    let list = [];
+    if (v?.type) {
+      //console.log('list', ...v);
+      list.push(`title : ${title}`);
+      list.push(`type : ${v?.type ?? 'text'}`);
+      if (v?.type === 'dict-radio') {
+        list.push(`dict : dict({ 'url': '/sys/open/getDictCode?code=STATUS', })`);
+        list.push(`valueBuilder({ value, row, key }) {
+            if (value != null) {
+              row[key] = value === '1' ? 1 : 0;
+            }
+          },`);
+      }
+      console.log(v);
+      console.log('\n++++++++++++++++\n');
+    } else {
+      console.log(v);
+      console.log('\n++++++++++++++++\n');
+    }
+    return list;
+  }
+
+  return {
+    column: parse(d?.table),
+    item: parse(d?.form),
+    list: queue(d?.form),
+  };
+}
+
+const createTest = (post) => {
+  const upsert = {
+    items: {},
+    list: [],
+  };
+
+  const { columns } = post;
+
+  // const table = {
+  //   columns: [],
+  // };
+
+  //try {
+  // 遍历
+  columns.forEach((e) => {
+    // 组件
+    const { item, list /* , column */ } = createComponent(e);
+    // 验证规则
+    if (e.nullable) {
+      item.form = {
+        rules: [{ required: true, message: '此项必填' }],
+      };
+    }
+    // 忽略部分字段
+    if (![/*'createTime', 'updateTime',*/ 'id', 'endTime', 'endDate'].includes(item.key)) {
+      upsert.items[item.key] = format(item);
+    }
+    upsert.list.push(`${item.key}: {${JSON.parse(JSON.stringify(list.join(',')))}},`);
+    //}
+  });
+
+  return upsert;
+};
 
 function createFormOptions(service, expose) {
   // 自定义表单配置
@@ -34,24 +282,9 @@ function createFormOptions(service, expose) {
     });
   }
 
-  const { columns } = entities[2];
-  const columnList = [];
-  columns.forEach((e) => {
-    columnList[e.propertyName] = {
-      title: e.comment,
-      type: e.type,
-      form: {
-        show: true,
-        rules: [{ required: e.nullable, message: '必填项目' }],
-        helper: {
-          text: e.comment,
-        },
-      },
-    };
-  });
-
-  console.log(entities);
-
+  // console.log(entities[10]);
+  // const form = createTest(entities[10]);
+  // console.log(JSON.stringify(form.list));
   //console.log(entities);
 
   return buildFormOptions({
@@ -363,23 +596,21 @@ function createFormOptions(service, expose) {
             });
 
             // 批量插入权限
-            console.log('form submit:', [item, form]);
-
+            const post = { ...item, ...form };
+            console.log('post submit:');
+            console.log(post);
             service.sys.menu.add(perms).then(() => {
               service.request({
                 url: '/__cool_createMenu',
                 proxy: false,
                 method: 'POST',
-                data: {
-                  ...item,
-                  ...form,
-                },
+                data: post,
               });
             });
-          })
-          .catch((err) => {
-            ui.message.error(err.message);
           });
+        // .catch((err) => {
+        //   ui.message.error(err.message);
+        // });
       },
     },
   });

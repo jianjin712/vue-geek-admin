@@ -20,3 +20,5 @@ declare module 'virtual:*' {
   const result: any;
   export default result;
 }
+
+declare module '@fast-crud/fast-extends';

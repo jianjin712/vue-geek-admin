@@ -1,0 +1,22 @@
+{
+  "views": {
+    "prefix": "views",
+    "body": [
+      "<template>",
+      "  <PageWrapper class=\"fixed\"> 新建模版 </PageWrapper>",
+      "</template>\n",
+      "<script>",
+      "  import { defineComponent, onMounted, ref, unref, h, inject } from 'vue';",
+      "  import { PageWrapper } from '/@/components/Page';",
+      "  export default defineComponent({",
+      "    name: 'xxx',",
+      "    components: { PageWrapper },",
+      "    setup() {",
+      "      return {};",
+      "    },",
+      "  });",
+      "</script>\n",
+      "<style></style>\n",
+    ],
+  }
+}
